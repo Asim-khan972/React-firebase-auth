@@ -2,6 +2,7 @@ import FullPageLoader from "../components/FullPageLoader.jsx";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  sendPasswordResetEmail,
 } from "firebase/auth";
 import { useState } from "react";
 import { auth } from "../firebase/config.js";
@@ -10,6 +11,7 @@ function LoginPage() {
   const [loginType, setLoginType] = useState("login");
   const [useCredentials, setUserCredentials] = useState({});
   const [error, setError] = useState("");
+  const [user, setUser] = useState("");
   console.log(auth);
 
   const handleCredentials = (e) => {
@@ -30,7 +32,8 @@ function LoginPage() {
         // Signed up
         const user = userCredential.user;
         // ...
-        console.log(user);
+        // localStorage.setItem(user);
+        console.log(user.email);
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -55,13 +58,21 @@ function LoginPage() {
         // Signed in
         const user = userCredential.user;
         // ...
-        console.log(user);
+        console.log(user.email);
+        localStorage.setItem("email", user.email);
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
         setError(errorMessage);
       });
+  };
+
+  const handleResetPasswordEmail = () => {
+    // console.log("email");
+    const email = prompt("Enter your email !");
+    sendPasswordResetEmail(auth, email);
+    alert("email is sent Check your email box , instruction was sent");
   };
   return (
     <>
@@ -122,7 +133,9 @@ function LoginPage() {
 
             {error && <div className="error">{error}</div>}
 
-            <p className="forgot-password">Forgot Password?</p>
+            <p className="forgot-password" onClick={handleResetPasswordEmail}>
+              Forgot Password?
+            </p>
           </form>
         </section>
       </div>
